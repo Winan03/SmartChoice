@@ -51,7 +51,7 @@ export default function ChatModal({ isOpen, onClose }: ChatModalProps) {
         prioridad: null
     });
 
-    const { theme, toggleTheme } = useTheme();
+    const { isDark, toggleTheme } = useTheme();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -209,7 +209,7 @@ export default function ChatModal({ isOpen, onClose }: ChatModalProps) {
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                             >
-                                {theme === 'dark' ? <Sun /> : <Moon />}
+                                {isDark ? <Sun /> : <Moon />}
                             </motion.button>
 
                             {/* Close Button */}
