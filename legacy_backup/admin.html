@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>SmartChoice | Panel Administrativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-card">
+            <div class="login-header">
+                <span class="logo-icon">🔐</span>
+                <h2>Panel Administrativo</h2>
+                <p>Ingresa la contraseña para acceder</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="password" id="passwordInput" class="form-input" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Ingresar</button>
+                <p class="login-error" id="loginError"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-dashboard" id="adminDashboard" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-container">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">💻</span>
+                    <span class="logo-text">Smart<span class="logo-accent">Choice</span></span>
+                    <span class="admin-badge">Admin</span>
+                </a>
+                <div class="header-actions">
+                    <span class="sheet-name" id="sheetNameDisplay">📊 SmartChoice_Productos</span>
+                    <button class="btn-secondary" id="syncBtn">
+                        <span>🔄</span>
+                        <span>Sincronizar</span>
+                    </button>
+                    <button class="btn-logout" id="logoutBtn">Salir</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-container">
+                <!-- Upload Section -->
+                <section class="admin-section">
+                    <div class="section-header">
+                        <div>
+                            <h2>📥 Cargar Datos</h2>
+                            <p>Sube un archivo CSV o conecta con Google Sheets</p>
+                        </div>
+                        <div class="upload-actions">
+                            <label class="btn-upload">
+                                <input type="file" id="csvUpload" accept=".csv" hidden>
+                                <span>📄 Subir CSV</span>
+                            </label>
+                            <button class="btn-primary" id="connectSheets">
+                                <span>📊</span>
+                                <span>Conectar Google Sheets</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Google Sheets URL Input -->
+                    <div class="sheets-connect" id="sheetsConnect" style="display: none;">
+                        <div class="form-group">
+                            <label>URL del Google Sheet</label>
+                            <input type="text" id="sheetUrl" class="form-input"
+                                placeholder="https://docs.google.com/spreadsheets/d/...">
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre de la hoja</label>
+                            <input type="text" id="sheetTabName" class="form-input" value="SmartChoice_Productos">
+                        </div>
+                        <button class="btn-primary" id="loadSheet">Cargar Sheet</button>
+                    </div>
+                </section>
+
+                <!-- Products Table -->
+                <section class="admin-section">
+                    <div class="section-header">
+                        <div>
+                            <h2>📦 Productos</h2>
+                            <p id="productCount">0 productos cargados</p>
+                        </div>
+                        <div class="table-actions">
+                            <input type="text" id="searchProducts" class="form-input search-input"
+                                placeholder="🔍 Buscar...">
+                            <button class="btn-primary" id="addProductBtn">
+                                <span>➕</span>
+                                <span>Agregar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="products-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Marca</th>
+                                    <th>Modelo</th>
+                                    <th>CPU</th>
+                                    <th>GPU</th>
+                                    <th>RAM</th>
+                                    <th>Precio</th>
+                                    <th>Gaming</th>
+                                    <th>Ing.</th>
+                                    <th>Oficina</th>
+                                    <th>Port.</th>
+                                    <th>Stock</th>
+                                    <th>Activo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Status & Info -->
+                <section class="admin-section info-section">
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <span class="info-icon">📊</span>
+                            <div>
+                                <h4>Google Sheets</h4>
+                                <p id="sheetsStatus" class="status-pending">No conectado</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-icon">⚙️</span>
+                            <div>
+                                <h4>n8n Webhook</h4>
+                                <p id="n8nStatus" class="status-pending">Verificando...</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-icon">🔄</span>
+                            <div>
+                                <h4>Última sincronización</h4>
+                                <p id="lastSync">Nunca</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Edit Product Modal -->
+        <div class="modal" id="editModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Editar Producto</h3>
+                    <button class="modal-close" id="closeModal">✕</button>
+                </div>
+                <form id="productForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>ID</label>
+                            <input type="number" id="editId" class="form-input" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Marca *</label>
+                            <input type="text" id="editMarca" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Modelo *</label>
+                            <input type="text" id="editModelo" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>CPU *</label>
+                            <input type="text" id="editCpu" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>GPU *</label>
+                            <input type="text" id="editGpu" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>RAM (GB)</label>
+                            <input type="number" id="editRam" class="form-input" value="16">
+                        </div>
+                        <div class="form-group">
+                            <label>Almacenamiento</label>
+                            <input type="text" id="editAlmacenamiento" class="form-input" value="512GB SSD">
+                        </div>
+                        <div class="form-group">
+                            <label>Peso (kg)</label>
+                            <input type="number" id="editPeso" class="form-input" step="0.1" value="2.0">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio (USD) *</label>
+                            <input type="number" id="editPrecio" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Stock</label>
+                            <input type="number" id="editStock" class="form-input" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Portabilidad</label>
+                            <select id="editPortabilidad" class="form-input">
+                                <option value="alta">Alta</option>
+                                <option value="media">Media</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Gaming</label>
+                            <select id="editGaming" class="form-input">
+                                <option value="sí">Sí</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ingeniería</label>
+                            <select id="editIngenieria" class="form-input">
+                                <option value="sí">Sí</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Oficina</label>
+                            <select id="editOficina" class="form-input">
+                                <option value="sí">Sí</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Activo</label>
+                            <select id="editActivo" class="form-input">
+                                <option value="sí">Sí</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>URL Imagen</label>
+                            <input type="url" id="editImagenUrl" class="form-input" placeholder="https://...">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Link de Compra</label>
+                            <input type="url" id="editLinkCompra" class="form-input" placeholder="https://...">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="cancelEdit">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

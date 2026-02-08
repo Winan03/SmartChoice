@@ -1,0 +1,9 @@
+id,marca,modelo,cpu,gpu,ram,almacenamiento,peso,precio,portabilidad,gaming,ingenieria,oficina,stock,activo,imagen_url,link_compra
+1,Lenovo,Legion 5 Pro,Ryzen 7 7745HX,RTX 4070,32,1TB SSD,2.5,1400,baja,sí,sí,no,10,sí,https://m.media-amazon.com/images/I/71f5Eu5lJSL._AC_SX679_.jpg,https://amazon.com
+2,Apple,MacBook Air M2,M2 Chip,Integrada 10-core,16,512GB SSD,1.24,1199,alta,no,no,sí,5,sí,https://m.media-amazon.com/images/I/719C6bJv8jL._AC_SX679_.jpg,https://amazon.com
+3,Asus,ROG Zephyrus G14,Ryzen 9 7940HS,RTX 4060,16,1TB SSD,1.65,1300,media,sí,sí,no,8,sí,https://m.media-amazon.com/images/I/71NTi82uBEL._AC_SX679_.jpg,https://amazon.com
+4,Dell,XPS 15,Intel i7-13700H,RTX 4050,32,1TB SSD,1.86,1800,media,no,sí,sí,3,sí,https://m.media-amazon.com/images/I/71o2Yl4+lBL._AC_SX679_.jpg,https://amazon.com
+5,Acer,Nitro 5,Intel i5-12500H,RTX 3050,16,512GB SSD,2.5,800,baja,sí,no,no,15,sí,https://m.media-amazon.com/images/I/81bc8mA3nKL._AC_SX679_.jpg,https://amazon.com
+6,HP,Pavilion 15,Intel i5-1335U,Integrada Iris Xe,16,512GB SSD,1.75,650,media,no,no,sí,20,sí,https://m.media-amazon.com/images/I/7189iXimfWL._AC_SX679_.jpg,https://amazon.com
+7,MSI,Raider GE78,Intel i9-13980HX,RTX 4090,64,2TB SSD,3.1,3200,baja,sí,sí,no,2,sí,https://m.media-amazon.com/images/I/7123456.jpg,https://amazon.com
+8,Lenovo,ThinkPad X1 Carbon,Intel i7-1355U,Integrada Iris Xe,32,1TB SSD,1.12,1900,alta,no,no,sí,7,sí,https://m.media-amazon.com/images/I/71abcd.jpg,https://amazon.com

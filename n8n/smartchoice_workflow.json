@@ -1,0 +1,347 @@
+{
+  "name": "smartchoice_workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "smartchoice",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "4eea0e43-9478-4cab-ad5e-3e79634e18e8",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        260,
+        200
+      ],
+      "webhookId": "smartchoice-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "a2a129c6-14d7-4c86-ad43-0d188f932711",
+              "leftValue": "={{ $json.body.estado.fase }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f48b156a-6e77-4ae2-851f-ea23c3b40e18",
+      "name": "Check Fase Inicio",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "79fa8dd5-5a69-4281-a5d5-6ef757d613da",
+              "leftValue": "={{ $json.body?.estado?.fase }}",
+              "rightValue": "uso",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5cfe44a3-eb6b-4153-a3de-833b8ea7341e",
+      "name": "Check Fase Uso",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        480,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const sessionId = $input.first().json.body?.session_id || Date.now().toString();\n\nreturn {\n  json: {\n    success: true,\n    mensaje: \"¡Hola! 👋 Soy tu asistente de SmartChoice.\\n\\nTe ayudaré a encontrar la laptop perfecta en solo 2 preguntas.\\n\\n**¿Para qué la usarás principalmente?**\",\n    opciones: [\n      { id: \"gaming\", texto: \"🎮 Gaming\" },\n      { id: \"ingenieria\", texto: \"🔧 Ingeniería / Diseño\" },\n      { id: \"oficina\", texto: \"💼 Oficina / Estudio\" },\n      { id: \"ambos\", texto: \"🎮🔧 Gaming + Ingeniería\" }\n    ],\n    estado: {\n      session_id: sessionId,\n      fase: \"uso\",\n      uso: null,\n      prioridad: null\n    },\n    tipo_respuesta: \"opciones\"\n  }\n};"
+      },
+      "id": "a83a0d14-3fc1-4049-ae24-ca19598a8401",
+      "name": "Inicio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst mensaje = (body.mensaje || '').toLowerCase();\nconst estadoActual = body.estado || {};\n\nlet uso = 'oficina';\nif (mensaje.includes('gaming') && (mensaje.includes('ingenieria') || mensaje.includes('diseño') || mensaje.includes('ambos'))) {\n  uso = 'ambos';\n} else if (mensaje.includes('gaming') || mensaje.includes('juegos') || mensaje.includes('gamer')) {\n  uso = 'gaming';\n} else if (mensaje.includes('ingenieria') || mensaje.includes('diseño') || mensaje.includes('arquitectura')) {\n  uso = 'ingenieria';\n} else if (mensaje.includes('oficina') || mensaje.includes('estudio') || mensaje.includes('trabajo')) {\n  uso = 'oficina';\n} else if (mensaje.includes('ambos')) {\n  uso = 'ambos';\n}\n\nreturn {\n  json: {\n    success: true,\n    mensaje: \"¡Excelente elección! 🎯\\n\\n**¿Qué es más importante para ti?**\",\n    opciones: [\n      { id: \"potencia\", texto: \"⚡ Potencia máxima\", descripcion: \"El mejor rendimiento\" },\n      { id: \"portabilidad\", texto: \"🪶 Portabilidad\", descripcion: \"Liviana y fácil de llevar\" },\n      { id: \"equilibrio\", texto: \"⚖️ Equilibrio\", descripcion: \"Un balance entre ambos\" }\n    ],\n    estado: {\n      session_id: estadoActual.session_id || body.session_id,\n      fase: \"prioridad\",\n      uso: uso,\n      prioridad: null\n    },\n    tipo_respuesta: \"opciones\"\n  }\n};"
+      },
+      "id": "54a02ca8-41ab-490e-bab6-948b522e100e",
+      "name": "Procesar Uso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst mensaje = (body.mensaje || '').toLowerCase();\nconst estadoActual = body.estado || {};\n\nlet prioridad = 'equilibrio';\nif (mensaje.includes('potencia') || mensaje.includes('maxim') || mensaje.includes('rendimiento')) {\n  prioridad = 'potencia';\n} else if (mensaje.includes('portab') || mensaje.includes('liviana') || mensaje.includes('ligera')) {\n  prioridad = 'portabilidad';\n} else if (mensaje.includes('equili') || mensaje.includes('balance')) {\n  prioridad = 'equilibrio';\n}\n\n// Crear el estado completo\nconst estadoCompleto = {\n  session_id: estadoActual.session_id,\n  fase: \"recomendar\",\n  uso: estadoActual.uso,\n  prioridad: prioridad\n};\n\n// Guardar en workflow Y retornar\n$workflow.estado = estadoCompleto;\n\n// Retornar el estado para que fluya a través de los nodos\nreturn {\n  json: {\n    estado: estadoCompleto\n  }\n};"
+      },
+      "id": "6f30b8ae-c7a1-4de9-af1e-0b073fe666c6",
+      "name": "Procesar Prioridad",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// El primer item siempre será el estado de \"Procesar Prioridad\"\nconst allItems = $input.all();\n\nconsole.log('📊 Total items recibidos:', allItems.length);\n\n// El primer item debe ser el estado\nconst primerItem = allItems[0];\n\n// Validar que tenemos el estado\nif (!primerItem || !primerItem.json || !primerItem.json.estado) {\n  console.error('❌ No se encontró el estado en el primer item');\n  return {\n    json: {\n      success: false,\n      mensaje: \"❌ Error: No se pudo recuperar tu información. Por favor, intenta de nuevo.\",\n      estado: null,\n      tipo_respuesta: \"error\",\n      producto: null\n    }\n  };\n}\n\nconst estado = primerItem.json.estado;\nconsole.log('🎯 Estado cargado:', JSON.stringify(estado));\n\n// Validar campos del estado\nif (!estado.uso || !estado.prioridad) {\n  console.error('❌ Estado incompleto:', estado);\n  return {\n    json: {\n      success: false,\n      mensaje: \"❌ Error: Información incompleta. Por favor, intenta de nuevo.\",\n      estado: null,\n      tipo_respuesta: \"error\",\n      producto: null\n    }\n  };\n}\n\n// Los demás items son productos de Google Sheets\nconst productos = allItems.slice(1).filter(item => item.json.marca);\n\nconsole.log('📦 Total productos:', productos.length);\n\nconst uso = estado.uso;\nconst prioridad = estado.prioridad;\n\nconsole.log(`🔎 Filtrando por: uso=${uso}, prioridad=${prioridad}`);\n\n// Filtrar productos activos con stock\nlet filtrados = productos.filter(p => {\n  const activo = String(p.json.activo || 'si').toLowerCase();\n  const stock = parseInt(p.json.stock) || 0;\n  return (activo === 'si' || activo === 'sí') && stock > 0;\n});\n\nconsole.log('📦 Productos activos con stock:', filtrados.length);\n\n// Filtrar por uso\nif (uso === 'gaming') {\n  filtrados = filtrados.filter(p => String(p.json.gaming || '').toLowerCase() === 'si');\n} else if (uso === 'ingenieria') {\n  filtrados = filtrados.filter(p => String(p.json.ingenieria || '').toLowerCase() === 'si');\n} else if (uso === 'ambos') {\n  filtrados = filtrados.filter(p => \n    String(p.json.gaming || '').toLowerCase() === 'si' && \n    String(p.json.ingenieria || '').toLowerCase() === 'si'\n  );\n} else { // oficina\n  filtrados = filtrados.filter(p => String(p.json.oficina || '').toLowerCase() === 'si');\n}\n\nconsole.log(`📦 Productos filtrados por uso (${uso}):`, filtrados.length);\n\nif (filtrados.length === 0) {\n  console.warn('⚠️ No se encontraron productos que cumplan el criterio de uso');\n  return {\n    json: {\n      success: false,\n      mensaje: \"Lo siento, no encontré una laptop perfecta para ti. 😔\\n\\n¿Quieres que te muestre todas las opciones disponibles?\",\n      estado: { \n        session_id: estado.session_id,\n        fase: \"completado\", \n        uso: uso, \n        prioridad: prioridad \n      },\n      tipo_respuesta: \"error\",\n      producto: null\n    }\n  };\n}\n\n// Ordenar según prioridad\nif (prioridad === 'potencia') {\n  // Ordenar por precio descendente (más caro = más potente)\n  filtrados.sort((a, b) => {\n    const precioA = parseFloat(a.json.precio) || 0;\n    const precioB = parseFloat(b.json.precio) || 0;\n    return precioB - precioA;\n  });\n  console.log('⚡ Ordenado por potencia (precio descendente)');\n  \n} else if (prioridad === 'portabilidad') {\n  // Ordenar por portabilidad (alta > media > baja) y luego por peso\n  filtrados.sort((a, b) => {\n    const portMap = { 'alta': 3, 'media': 2, 'baja': 1 };\n    const portA = portMap[String(a.json.portabilidad || 'media').toLowerCase()] || 2;\n    const portB = portMap[String(b.json.portabilidad || 'media').toLowerCase()] || 2;\n    \n    // Primero comparar por portabilidad\n    if (portB !== portA) return portB - portA;\n    \n    // Si tienen la misma portabilidad, ordenar por peso (menor es mejor)\n    const pesoA = parseFloat(a.json.peso) || 999;\n    const pesoB = parseFloat(b.json.peso) || 999;\n    return pesoA - pesoB;\n  });\n  console.log('🪶 Ordenado por portabilidad y peso');\n  \n} else { // equilibrio\n  // Dar puntuación balanceada: RAM (40%), Precio (30%), Portabilidad (30%)\n  filtrados.sort((a, b) => {\n    const ramA = parseInt(a.json.ram) || 8;\n    const ramB = parseInt(b.json.ram) || 8;\n    \n    const precioA = parseFloat(a.json.precio) || 0;\n    const precioB = parseFloat(b.json.precio) || 0;\n    \n    const portMap = { 'alta': 3, 'media': 2, 'baja': 1 };\n    const portA = portMap[String(a.json.portabilidad || 'media').toLowerCase()] || 2;\n    const portB = portMap[String(b.json.portabilidad || 'media').toLowerCase()] || 2;\n    \n    // Score normalizado\n    const scoreA = (ramA / 32) * 0.4 + (precioA / 2000) * 0.3 + (portA / 3) * 0.3;\n    const scoreB = (ramB / 32) * 0.4 + (precioB / 2000) * 0.3 + (portB / 3) * 0.3;\n    \n    return scoreB - scoreA;\n  });\n  console.log('⚖️ Ordenado por equilibrio (RAM + Precio + Portabilidad)');\n}\n\nconst rec = filtrados[0];\nconst p = rec.json;\n\nconsole.log('✅ Producto seleccionado:', p.marca, p.modelo);\n\nconst mensajeBienvenida = {\n  gaming: \"🎮 ¡Perfecta para gaming!\",\n  ingenieria: \"🔧 ¡Ideal para ingeniería y diseño!\",\n  oficina: \"💼 ¡Perfecta para oficina!\",\n  ambos: \"🎮🔧 ¡Lo mejor de ambos mundos!\"\n};\n\nreturn {\n  json: {\n    success: true,\n    mensaje: `${mensajeBienvenida[uso]}\\n\\n**${p.marca} ${p.modelo}**\\n\\nBasado en tus preferencias, esta es tu mejor opción.`,\n    estado: { \n      session_id: estado.session_id,\n      fase: \"completado\", \n      uso: uso, \n      prioridad: prioridad \n    },\n    tipo_respuesta: \"recomendacion\",\n    producto: {\n      id: p.id,\n      marca: p.marca,\n      modelo: p.modelo,\n      cpu: p.cpu,\n      gpu: p.gpu,\n      ram: `${p.ram}GB`,\n      almacenamiento: p.almacenamiento,\n      peso: `${p.peso}kg`,\n      precio: `$${p.precio}`,\n      imagen_url: p.imagen_url,\n      link_compra: p.link_compra,\n      puntos_clave: [\n        `Procesador ${p.cpu}`,\n        `GPU ${p.gpu}`,\n        `${p.ram}GB RAM`,\n        `Peso: ${p.peso}kg`\n      ]\n    }\n  }\n};"
+      },
+      "id": "9e7760e9-c7dc-4f80-97b4-1815abee60aa",
+      "name": "Recomendar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1380,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "e2878e9d-9dc7-41ed-b4e8-da5ac62e613a",
+      "name": "Response Inicio",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        940,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "578844fd-8e72-472b-b0a7-8c4c968819b5",
+      "name": "Response Uso",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        940,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "6aa03d70-ff59-4434-964a-8b66f5b3bc99",
+      "name": "Response Final",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1120,
+        420
+      ],
+      "id": "15e28ad5-113c-49a9-92ee-8bf9cf59c378",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// URL del CSV público\nconst csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0dTy2aKV542j_HprQVNEARrhfLyXeGWW_UKatv6dBzkXqt20bNfQlVyUf4sDcwL_UbxAQ0_6FV42j/pub?gid=1901002027&single=true&output=csv';\n\n// Hacer el request\nconst response = await this.helpers.httpRequest({\n  method: 'GET',\n  url: csvUrl,\n});\n\n// Parsear CSV manualmente\nfunction parseCSV(text) {\n  const lines = text.trim().split('\\n');\n  const headers = lines[0].split(',').map(h => h.trim());\n  const data = [];\n  \n  for (let i = 1; i < lines.length; i++) {\n    if (!lines[i].trim()) continue;\n    \n    const values = lines[i].split(',');\n    const row = {};\n    \n    headers.forEach((header, index) => {\n      row[header] = values[index] ? values[index].trim() : '';\n    });\n    \n    data.push(row);\n  }\n  \n  return data;\n}\n\nconst productos = parseCSV(response);\n\nconsole.log('📦 Total productos leídos:', productos.length);\nconsole.log('📦 Primer producto:', productos[0]);\n\n// Retornar cada producto como un item separado\nreturn productos.map(p => ({ json: p }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        540
+      ],
+      "id": "55c95c76-1dad-45c3-aa41-7642e1f2d8b2",
+      "name": "Leer CSV"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Check Fase Inicio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Fase Inicio": {
+      "main": [
+        [
+          {
+            "node": "Inicio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Fase Uso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Fase Uso": {
+      "main": [
+        [
+          {
+            "node": "Procesar Uso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Procesar Prioridad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inicio": {
+      "main": [
+        [
+          {
+            "node": "Response Inicio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Uso": {
+      "main": [
+        [
+          {
+            "node": "Response Uso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Prioridad": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Leer CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recomendar": {
+      "main": [
+        [
+          {
+            "node": "Response Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Recomendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer CSV": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2187848d-fade-4374-b789-15f726f364aa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dadcad000cac6b4cda0ee36d86c7cb763784b594b25b0f16cdbcccf297d318d2"
+  },
+  "id": "vCpLbijV4MRs5gtB",
+  "tags": []
+}

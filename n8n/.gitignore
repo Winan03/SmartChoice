@@ -1,0 +1,9 @@
+# Credenciales de Google Cloud (NUNCA subir!)
+*.json
+!smartchoice_workflow.json
+
+# Claves privadas
+*.pem
+*.key
+*credentials*
+*service-account*

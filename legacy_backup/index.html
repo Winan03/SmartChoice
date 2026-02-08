@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SmartChoice - Tu asistente inteligente para elegir la laptop perfecta. Encuentra tu laptop ideal en solo 2 preguntas.">
+    <meta name="keywords" content="laptops, recomendador, personal shopper, gaming, ingeniería, oficina">
+    <title>SmartChoice | Tu Laptop Perfecta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">💻</span>
+                <span class="logo-text">Smart<span class="logo-accent">Choice</span></span>
+            </a>
+            <nav class="nav">
+                <a href="#catalogo" class="nav-link">Catálogo</a>
+                <a href="#como-funciona" class="nav-link">¿Cómo funciona?</a>
+                <button class="btn-assistant" id="openChatBtn">
+                    <span class="btn-icon">🤖</span>
+                    <span>Ayúdame a elegir</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">✨ Asistente IA</div>
+            <h1 class="hero-title">
+                Encuentra tu laptop perfecta
+                <span class="hero-gradient">en 2 preguntas</span>
+            </h1>
+            <p class="hero-subtitle">
+                Deja de comparar especificaciones. Nuestro asistente inteligente 
+                te recomienda LA mejor opción basada en tus necesidades reales.
+            </p>
+            <div class="hero-cta">
+                <button class="btn-primary" id="heroOpenChat">
+                    <span>🎯</span>
+                    <span>Encontrar mi laptop</span>
+                </button>
+                <a href="#catalogo" class="btn-secondary">
+                    Ver catálogo completo
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Laptops</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">2</span>
+                    <span class="stat-label">Preguntas</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">1</span>
+                    <span class="stat-label">Recomendación perfecta</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-card">
+                <div class="hero-card-header">
+                    <div class="hero-card-dot"></div>
+                    <div class="hero-card-dot"></div>
+                    <div class="hero-card-dot"></div>
+                </div>
+                <div class="hero-chat-preview">
+                    <div class="preview-message bot">
+                        <span>¿Para qué usarás tu laptop?</span>
+                    </div>
+                    <div class="preview-message user">
+                        <span>Gaming e Ingeniería</span>
+                    </div>
+                    <div class="preview-message bot">
+                        <span>🎯 Tu laptop perfecta: Lenovo Legion 5</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works" id="como-funciona">
+        <div class="section-container">
+            <h2 class="section-title">¿Cómo funciona?</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">💬</div>
+                    <h3>Cuéntanos tu uso</h3>
+                    <p>¿Gaming? ¿Ingeniería? ¿Oficina? Solo dinos para qué la necesitas.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">⚖️</div>
+                    <h3>Elige tu prioridad</h3>
+                    <p>¿Potencia máxima o portabilidad? Tú decides qué importa más.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">🎯</div>
+                    <h3>Recibe LA opción</h3>
+                    <p>No 10 opciones. UNA. La perfecta para ti, lista para comprar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalog -->
+    <section class="catalog" id="catalogo">
+        <div class="section-container">
+            <div class="catalog-header">
+                <div>
+                    <h2 class="section-title">Nuestro Catálogo</h2>
+                    <p class="section-subtitle">¿No sabes cuál elegir? <button class="link-button" id="catalogOpenChat">Usa el asistente</button></p>
+                </div>
+                <div class="catalog-filters">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="gaming">🎮 Gaming</button>
+                    <button class="filter-btn" data-filter="ingenieria">🔧 Ingeniería</button>
+                    <button class="filter-btn" data-filter="oficina">💼 Oficina</button>
+                </div>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded dynamically -->
+                <div class="product-skeleton"></div>
+                <div class="product-skeleton"></div>
+                <div class="product-skeleton"></div>
+                <div class="product-skeleton"></div>
+            </div>
+            <div class="catalog-cta">
+                <p>¿Abrumado con tantas opciones?</p>
+                <button class="btn-primary" id="catalogCta">
+                    <span>🤖</span>
+                    <span>Deja que el asistente elija por ti</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar">🤖</div>
+                <div>
+                    <h3>Asistente SmartChoice</h3>
+                    <span class="chat-status">En línea</span>
+                </div>
+            </div>
+            <button class="chat-close" id="closeChatBtn">✕</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be added dynamically -->
+        </div>
+        <div class="chat-options" id="chatOptions">
+            <!-- Quick reply options will be added dynamically -->
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Escribe tu mensaje...">
+            <button class="chat-send" id="chatSend">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13"></path>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Toggle Button (when minimized) -->
+    <button class="chat-toggle" id="chatToggle">
+        <span class="chat-toggle-icon">💬</span>
+        <span class="chat-toggle-text">¿Ayuda?</span>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="logo-icon">💻</span>
+                <span class="logo-text">Smart<span class="logo-accent">Choice</span></span>
+            </div>
+            <p class="footer-text">
+                Sistema de recomendación inteligente basado en ISO 25010.
+                <br>
+                <a href="admin.html" class="footer-link">Panel Admin</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
